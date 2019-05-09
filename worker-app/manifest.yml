@@ -1,0 +1,10 @@
+---
+applications:
+- name: worker-app
+  path: ./target/worker-app-0.0.1-SNAPSHOT.war
+  memory: 768M
+  random-route: true
+  buildpack: java_buildpack_offline
+  services:
+  - worker-mq
+  - cloud-config-server
