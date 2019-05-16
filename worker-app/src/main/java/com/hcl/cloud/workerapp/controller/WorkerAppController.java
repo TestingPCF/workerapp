@@ -16,10 +16,10 @@ import com.hcl.cloud.workerapp.service.MessageSenderService;
 @RestController
 public class WorkerAppController {
 
-    @Autowired
-    private MessageSenderService messageSenderService;
-    @GetMapping("/send")
-    public void sendMessage() {
-        messageSenderService.sendMessage();
-    }
+//    @Autowired
+//    private MessageSenderService messageSenderService;
+////    @GetMapping("/send")
+////    public void sendMessage() {
+////        messageSenderService.sendMessage();
+////    }
 }
