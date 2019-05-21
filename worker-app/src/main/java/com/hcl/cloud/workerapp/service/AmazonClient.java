@@ -34,8 +34,14 @@ import dto.CustomMessageBean;
  */
 @Service
 public class AmazonClient {
-    @Autowired
+   
     MessageSenderService messageSenderService;
+    CustomMessageListener customMessageListener;
+    @Autowired
+    public AmazonClient(MessageSenderService messageSenderService,CustomMessageListener customMessageListener){
+    	this.messageSenderService=messageSenderService;
+    	this.customMessageListener=customMessageListener;
+    }
     public AmazonS3 s3client;
 
     static Logger log = LoggerFactory.getLogger(AmazonClient.class);
@@ -46,6 +52,9 @@ public class AmazonClient {
     private String accessKey;
     @Value("${amazonProperties.secretKey}")
     private String secretKey;
+    
+    //@Value("${amazonProperties.key_name}")
+    //private String key_name;
 
     @PostConstruct
     private void initializeAmazon() {
@@ -57,7 +66,9 @@ public class AmazonClient {
 
     @Scheduled(fixedDelay = 600000, initialDelay = 60000)
     public void getFeedFromS3() {
-        S3Object s3object = s3client.getObject(bucketName, "inventoryFeedS3.json");
+       S3Object s3object = s3client.getObject(bucketName, "inventoryFeedS3.json");
+    	//S3Object s3object = s3client.getObject(bucketName, key_name);
+    	
         S3ObjectInputStream inputStream = s3object.getObjectContent();
 
         try {
@@ -72,6 +83,7 @@ public class AmazonClient {
                 long quantity = (Long) feedObj.get("quantity");
                 CustomMessageBean customMessageBean = new CustomMessageBean(skuCode, quantity);
                 messageSenderService.sendNow(customMessageBean);
+                customMessageListener.receiveMessage(customMessageBean);
             }
         } catch (Exception e) {
             log.info("Error occured while receiving feed from S3 :", e.getLocalizedMessage());
