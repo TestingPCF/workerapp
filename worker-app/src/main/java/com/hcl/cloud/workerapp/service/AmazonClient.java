@@ -62,7 +62,7 @@ public class AmazonClient {
 
     }
 
-    @Scheduled(fixedDelay = 600000, initialDelay = 60000)
+    @Scheduled(fixedDelay = 6000, initialDelay = 6000)
     public void getFeedFromS3() {
         S3Object s3object = s3client.getObject(bucketName, "inventoryFeedS3.json");
 
