@@ -8,8 +8,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 import com.hcl.cloud.workerapp.constant.ConfigConstant;
-
-import dto.CustomMessageBean;
+import com.hcl.cloud.workerapp.dto.CustomMessageBean;
 
 @Service
 public class CustomMessageListener {

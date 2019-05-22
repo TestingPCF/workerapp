@@ -11,8 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.hcl.cloud.workerapp.constant.ConfigConstant;
-
-import dto.CustomMessageBean;
+import com.hcl.cloud.workerapp.dto.CustomMessageBean;
 
 @Service
 public class MessageSenderService {

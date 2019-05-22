@@ -25,8 +25,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
-
-import dto.CustomMessageBean;
+import com.hcl.cloud.workerapp.dto.CustomMessageBean;
 
 /**
  * @author BrijendraK
@@ -34,14 +33,16 @@ import dto.CustomMessageBean;
  */
 @Service
 public class AmazonClient {
-   
+
     MessageSenderService messageSenderService;
     CustomMessageListener customMessageListener;
+
     @Autowired
-    public AmazonClient(MessageSenderService messageSenderService,CustomMessageListener customMessageListener){
-    	this.messageSenderService=messageSenderService;
-    	this.customMessageListener=customMessageListener;
+    public AmazonClient(MessageSenderService messageSenderService, CustomMessageListener customMessageListener) {
+        this.messageSenderService = messageSenderService;
+        this.customMessageListener = customMessageListener;
     }
+
     public AmazonS3 s3client;
 
     static Logger log = LoggerFactory.getLogger(AmazonClient.class);
@@ -52,27 +53,23 @@ public class AmazonClient {
     private String accessKey;
     @Value("${amazonProperties.secretKey}")
     private String secretKey;
-    
-    //@Value("${amazonProperties.key_name}")
-    //private String key_name;
 
     @PostConstruct
     private void initializeAmazon() {
         AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
         this.s3client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .withRegion(Regions.US_EAST_2).build();
-        // getFeedFromS3();
+
     }
 
     @Scheduled(fixedDelay = 600000, initialDelay = 60000)
     public void getFeedFromS3() {
-       S3Object s3object = s3client.getObject(bucketName, "inventoryFeedS3.json");
-    	//S3Object s3object = s3client.getObject(bucketName, key_name);
-    	
+        S3Object s3object = s3client.getObject(bucketName, "inventoryFeedS3.json");
+
         S3ObjectInputStream inputStream = s3object.getObjectContent();
 
         try {
-            // JSON parser object to parse read file
+
             byte[] byteArray = IOUtils.toByteArray(s3object.getObjectContent());
             JSONParser parser = new JSONParser();
             JSONArray objArray = (JSONArray) parser.parse(new String(byteArray));

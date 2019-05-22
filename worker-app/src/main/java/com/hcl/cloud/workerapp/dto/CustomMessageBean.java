@@ -1,4 +1,4 @@
-package dto;
+package com.hcl.cloud.workerapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
