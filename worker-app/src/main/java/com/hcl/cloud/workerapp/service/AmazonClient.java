@@ -69,7 +69,7 @@ public class AmazonClient {
         S3ObjectInputStream inputStream = s3object.getObjectContent();
 
         try {
-
+            log.info("GetFeedFromS3 call start");
             byte[] byteArray = IOUtils.toByteArray(s3object.getObjectContent());
             JSONParser parser = new JSONParser();
             JSONArray objArray = (JSONArray) parser.parse(new String(byteArray));
@@ -83,9 +83,10 @@ public class AmazonClient {
                 customMessageListener.receiveMessage(customMessageBean);
             }
         } catch (Exception e) {
-            log.info("Error occured while receiving feed from S3 :", e.getLocalizedMessage());
+            log.error("Error occured while receiving feed from S3 :", e.getLocalizedMessage());
             inputStream.abort();
         }
+        log.info("GetFeedFromS3 call end");
         log.info("Successfully received and sent feed from S3 to inventory");
     }
 }
