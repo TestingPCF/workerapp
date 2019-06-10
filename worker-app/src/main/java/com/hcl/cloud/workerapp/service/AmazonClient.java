@@ -62,7 +62,7 @@ public class AmazonClient {
 
     }
 
-    @Scheduled(fixedDelay = 6000, initialDelay = 6000)
+    @Scheduled(fixedDelay = 10000, initialDelay = 6000)
     public void getFeedFromS3() {
         S3Object s3object = s3client.getObject(bucketName, "inventoryFeedS3.json");
 
@@ -72,18 +72,22 @@ public class AmazonClient {
             log.info("GetFeedFromS3 call start");
             byte[] byteArray = IOUtils.toByteArray(s3object.getObjectContent());
             JSONParser parser = new JSONParser();
-            JSONArray objArray = (JSONArray) parser.parse(new String(byteArray));
+            JSONObject jsonObj = (JSONObject) parser.parse(new String(byteArray));
+            JSONArray objArray = new JSONArray();
+            objArray.add(jsonObj);
             for (Object o : objArray) {
                 JSONObject feedObj = (JSONObject) o;
 
-                String skuCode = (String) feedObj.get("skucode");
+                String skuCode = (String) feedObj.get("skuCode");
                 long quantity = (Long) feedObj.get("quantity");
                 CustomMessageBean customMessageBean = new CustomMessageBean(skuCode, quantity);
                 messageSenderService.sendNow(customMessageBean);
                 customMessageListener.receiveMessage(customMessageBean);
+                System.out.println("Feed Received : "+customMessageBean.toString());
             }
         } catch (Exception e) {
             log.error("Error occured while receiving feed from S3 :", e.getLocalizedMessage());
+            e.printStackTrace();
             inputStream.abort();
         }
         log.info("GetFeedFromS3 call end");
